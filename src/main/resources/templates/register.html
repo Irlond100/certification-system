@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        .gradient-custom {
+            background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1))
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<section class="gradient-custom">
+    <div class="container py-5">
+        <div class="row d-flex justify-content-center align-items-center">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+                        <div class="mb-4">
+                            <h2 class="fw-bold mb-2 text-uppercase">Регистрация</h2>
+                            <p class="text-white-50 mb-4">Заполните форму для создания аккаунта</p>
+                        </div>
+
+                        <!-- Сообщения об ошибках -->
+                        <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+
+                        <form th:action="@{/register}" method="post">
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-outline form-white">
+                                        <input type="text" id="firstName" name="firstName"
+                                               class="form-control form-control-lg" required autofocus>
+                                        <label class="form-label" for="firstName">Имя</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-outline form-white">
+                                        <input type="text" id="lastName" name="lastName"
+                                               class="form-control form-control-lg" required>
+                                        <label class="form-label" for="lastName">Фамилия</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-outline form-white mb-4">
+                                <input type="text" id="username" name="username"
+                                       class="form-control form-control-lg" required>
+                                <label class="form-label" for="username">Логин</label>
+                            </div>
+
+                            <div class="form-outline form-white mb-4">
+                                <input type="email" id="email" name="email"
+                                       class="form-control form-control-lg" required>
+                                <label class="form-label" for="email">Email</label>
+                            </div>
+
+                            <div class="form-outline form-white mb-4">
+                                <input type="password" id="password" name="password"
+                                       class="form-control form-control-lg" required>
+                                <label class="form-label" for="password">Пароль</label>
+                            </div>
+
+                            <div class="form-outline form-white mb-4">
+                                <select class="form-select form-select-lg" id="specializationCode"
+                                        name="specializationCode" required>
+                                    <option value="">Выберите специализацию</option>
+                                    <option th:each="spec : ${specializations}"
+                                            th:value="${spec.code}"
+                                            th:text="${spec.name}"></option>
+                                </select>
+                            </div>
+
+                            <button class="btn btn-outline-light btn-lg px-5 mb-3" type="submit">
+                                Зарегистрироваться
+                            </button>
+                        </form>
+
+                        <div>
+                            <p class="mb-0">Уже есть аккаунт?
+                                <a th:href="@{/login}" class="text-white-50 fw-bold">Войдите</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
