@@ -1,5 +1,9 @@
+package com.aviation.certification.controller;
+
 import com.aviation.certification.model.User;
 import com.aviation.certification.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +13,7 @@ import java.util.Optional;
 
 @Controller
 public class DashboardController {
+	private static final Logger logger = LoggerFactory.getLogger(DashboardController.class);
 	private final UserService userService;
 	
 	public DashboardController(UserService userService) {
@@ -17,6 +22,12 @@ public class DashboardController {
 	
 	@GetMapping("/dashboard")
 	public String dashboard(Authentication authentication, Model model) {
+		logger.info("Dashboard request received");
+		
+		if (authentication == null || !authentication.isAuthenticated()) {
+			return "redirect:/login";
+		}
+		
 		String username = authentication.getName();
 		Optional<User> userOptional = userService.findByUsername(username);
 		
@@ -38,13 +49,15 @@ public class DashboardController {
 			model.addAttribute("isInstructor", isInstructor);
 			model.addAttribute("isCandidate", isCandidate);
 			
+			logger.info("User roles - Admin: {}, Instructor: {}, Candidate: {}", isAdmin, isInstructor, isCandidate);
+			
 			// Перенаправляем на соответствующую панель
 			if (isAdmin) {
-				return "admin/dashboard";
+				return "redirect:/admin/dashboard";
 			} else if (isInstructor) {
-				return "instructor/dashboard";
+				return "redirect:/instructor/dashboard";
 			} else if (isCandidate) {
-				return "candidate/dashboard";
+				return "redirect:/candidate/dashboard";
 			}
 		}
 		

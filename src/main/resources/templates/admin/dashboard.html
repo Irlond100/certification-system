@@ -16,13 +16,17 @@
                     <h2>Панель администратора</h2>
                 </div>
                 <div class="card-body">
+                    <div class="alert alert-info" role="alert">
+                        Добро пожаловать в панель администратора. Здесь вы можете управлять системой.
+                    </div>
+
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">Управление пользователями</h5>
                                     <p class="card-text">Просмотр, добавление и редактирование пользователей системы</p>
-                                    <a href="#" class="btn btn-primary">Перейти</a>
+                                    <a th:href="@{/admin/users}" class="btn btn-primary">Перейти</a>
                                 </div>
                             </div>
                         </div>
@@ -31,7 +35,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">Управление тестами</h5>
                                     <p class="card-text">Создание и редактирование тестов и вопросов</p>
-                                    <a href="#" class="btn btn-primary">Перейти</a>
+                                    <a th:href="@{/admin/tests}" class="btn btn-primary">Перейти</a>
                                 </div>
                             </div>
                         </div>
@@ -40,7 +44,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">Статистика</h5>
                                     <p class="card-text">Просмотр статистики по тестированиям и пользователям</p>
-                                    <a href="#" class="btn btn-primary">Перейти</a>
+                                    <a th:href="@{/admin/statistics}" class="btn btn-primary">Перейти</a>
                                 </div>
                             </div>
                         </div>
