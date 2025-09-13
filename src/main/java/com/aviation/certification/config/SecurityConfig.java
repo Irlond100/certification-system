@@ -44,10 +44,10 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
-				.csrf(csrf -> csrf.disable()) // Для разработки
+				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(authz -> authz
-						// Разрешаем доступ к статическим ресурсам и главной странице без аутентификации
-						.requestMatchers("/", "/home", "/register", "/login", "/css/**", "/js/**", "/images/**").permitAll()
+						.requestMatchers("/", "/home", "/register", "/login", "/css/**", "/js/**", "/images/**")
+						.permitAll()
 						.requestMatchers("/admin/**").hasRole("ADMIN")
 						.requestMatchers("/instructor/**").hasRole("INSTRUCTOR")
 						.requestMatchers("/candidate/**").hasRole("CANDIDATE")
@@ -55,7 +55,7 @@ public class SecurityConfig {
 				)
 				.formLogin(form -> form
 						.loginPage("/login")
-						.defaultSuccessUrl("/dashboard")
+						.defaultSuccessUrl("/dashboard", true)
 						.permitAll()
 				)
 				.logout(logout -> logout

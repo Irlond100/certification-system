@@ -2,17 +2,29 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <style>
+        .site-footer {
+            background-color: #e0f7fa;
+            color: #004d40;
+            padding: 2rem 0;
+            font-size: 0.9rem;
+        }
+        .site-footer h5 {
+            font-weight: 700;
+            color: #007bff;
+        }
+    </style>
 </head>
 <body>
-<footer th:fragment="footer" class="bg-dark text-light mt-5">
-    <div class="container py-4">
+<footer th:fragment="footer" class="site-footer">
+    <div class="container">
         <div class="row">
             <div class="col-md-6">
-                <h5>АвиаТест</h5>
-                <p>Система тестирования авиационных специалистов</p>
+                <h5>✈️ АвиаТест</h5>
+                <p class="mb-0">Современная система тестирования авиационных специалистов.</p>
             </div>
             <div class="col-md-6 text-md-end">
-                <p>&copy; 2025 АвиаТест. Все права защищены.</p>
+                <p class="mb-0">&copy; 2025 АвиаТест. Все права защищены.</p>
             </div>
         </div>
     </div>

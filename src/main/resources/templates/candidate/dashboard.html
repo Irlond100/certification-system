@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель кандидата</title>
+    <link th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h2>Панель кандидата</h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info" role="alert">
+                        <h4 class="alert-heading">Добро пожаловать, <span th:text="${user.firstName + ' ' + user.lastName}"></span>!</h4>
+                        <p>Ваша специализация:
+                            <span th:each="spec : ${user.specializations}" th:text="${spec.name}"></span>
+                        </p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Доступные тесты</h5>
+                                    <p class="card-text">Просмотр и прохождение доступных тестов</p>
+                                    <a th:href="@{/candidate/tests}" class="btn btn-info">Перейти</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Мои результаты</h5>
+                                    <p class="card-text">Просмотр истории прохождений и результатов</p>
+                                    <a th:href="@{/candidate/results}" class="btn btn-info">Перейти</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Учебные материалы</h5>
+                                    <p class="card-text">Доступ к учебным материалам для подготовки</p>
+                                    <a th:href="@{/candidate/materials}" class="btn btn-info">Перейти</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

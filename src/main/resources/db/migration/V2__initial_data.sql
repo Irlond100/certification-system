@@ -13,7 +13,7 @@ INSERT INTO specializations (code, name, description) VALUES
 
 -- Создание администратора (пароль: admin123)
 INSERT INTO users (username, password, email, first_name, last_name) VALUES
-    ('admin', '$2a$10$5VWq6vJfE2NnQqQr3qYpUe3zKvL7N8BZq1Xr2cS3d4V5bN7M8QZr', 'admin@aviationtest.ru', 'Иван', 'Петров');
+    ('admin', '$2a$10$Tn7hn..pNfpYnuRGWxBM6eJPW4o75d5GTnrsyiS5m..4wy5TPPlSm', 'admin@aviationtest.ru', 'Иван', 'Петров');
 
 -- Назначение роли администратора
 INSERT INTO user_roles (user_id, role_id)
