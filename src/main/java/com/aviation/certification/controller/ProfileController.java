@@ -1,13 +1,10 @@
 package com.aviation.certification.controller;
 
-import com.aviation.certification.model.User;
-import com.aviation.certification.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.Optional;
+import com.aviation.certification.service.UserService;
 
 @Controller
 public class ProfileController {
@@ -18,16 +15,11 @@ public class ProfileController {
 	}
 	
 	@GetMapping("/profile")
-	public String profile(Authentication authentication, Model model) {
+	public String profile(Model model, Authentication authentication) {
 		String username = authentication.getName();
-		Optional<User> userOptional = userService.findByUsername(username);
-		
-		if (userOptional.isPresent()) {
-			User user = userOptional.get();
-			model.addAttribute("user", user);
-			return "profile";
-		}
-		
-		return "redirect:/dashboard?error=user_not_found";
+		com.aviation.certification.model.User user = userService.findByUsername(username)
+				.orElseThrow(() -> new RuntimeException("User not found"));
+		model.addAttribute("user", user);
+		return "profile";
 	}
 }

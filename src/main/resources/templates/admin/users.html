@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -39,20 +40,21 @@
                         <td th:text="${user.firstName}"></td>
                         <td th:text="${user.lastName}"></td>
                         <td>
-                                <span th:each="role : ${user.roles}"
-                                      class="badge bg-secondary me-1"
-                                      th:text="${role.name.replace('ROLE_', '')}"></span>
+                            <span th:each="role : ${user.roles}"
+                                  class="badge bg-secondary me-1"
+                                  th:text="${role.name.replace('ROLE_', '')}"></span>
                         </td>
                         <td th:text="${#temporals.format(user.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
                         <td>
-                            <div class="btn-group btn-group-sm">
+                            <div class="btn-group btn-group-sm"
+                                 th:if="${user.username != currentUsername}">
                                 <a th:href="@{'/admin/users/edit/' + ${user.id}}"
-                                   class="btn btn-outline-primary"
-                                   th:if="${!user.roles.?[name == 'ROLE_ADMIN'].empty}">Редактировать</a>
+                                   class="btn btn-outline-primary">Редактировать</a>
                                 <button class="btn btn-outline-danger"
-                                        th:if="${!user.roles.?[name == 'ROLE_ADMIN'].empty}"
-                                        disabled>Удалить</button>
+                                        onclick="return confirm('Удалить пользователя?')">Удалить</button>
                             </div>
+                            <span th:if="${user.username == currentUsername}"
+                                  class="text-muted">Текущий пользователь</span>
                         </td>
                     </tr>
                     </tbody>

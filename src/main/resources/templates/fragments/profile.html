@@ -44,7 +44,8 @@
                                 </div>
                                 <div class="card-body">
                                     <ul class="list-unstyled mb-0">
-                                        <li th:each="role : ${user.roles}" th:text="${role.name}"></li>
+                                        <li th:each="role : ${user.roles}"
+                                            th:text="${role.name.replace('ROLE_', '')}"></li>
                                     </ul>
                                 </div>
                             </div>

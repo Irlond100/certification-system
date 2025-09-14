@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Заголовок страницы</title>
+    <title>Учебные материалы</title>
     <link th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" rel="stylesheet">
 </head>
 <body>
@@ -10,18 +10,18 @@
 
 <main class="container mt-5">
     <div class="card">
-        <div class="card-header">
-            <h2>Заголовок раздела</h2>
+        <div class="card-header bg-info text-white">
+            <h2>Учебные материалы</h2>
         </div>
         <div class="card-body">
-            <p>Содержимое страницы будет добавлено позже.</p>
-            <a th:href="@{/dashboard}" class="btn btn-primary">Вернуться на главную</a>
+            <div class="alert alert-info">
+                Здесь будут отображаться учебные материалы для подготовки к тестам.
+            </div>
+            <a th:href="@{/candidate/dashboard}" class="btn btn-secondary">Назад в личный кабинет</a>
         </div>
     </div>
 </main>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
-
-<script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

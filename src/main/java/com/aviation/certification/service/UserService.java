@@ -1,9 +1,8 @@
 package com.aviation.certification.service;
 
+import org.springframework.stereotype.Service;
 import com.aviation.certification.model.User;
 import com.aviation.certification.repository.UserRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -19,10 +18,6 @@ public class UserService {
 		return userRepository.findByUsername(username);
 	}
 	
-	public Optional<User> findById(Long id) {
-		return userRepository.findById(id);
-	}
-	
 	public List<User> findAll() {
 		return userRepository.findAll();
 	}
@@ -31,15 +26,11 @@ public class UserService {
 		return userRepository.save(user);
 	}
 	
+	public Optional<User> findById(Long id) {
+		return userRepository.findById(id);
+	}
+	
 	public void deleteById(Long id) {
 		userRepository.deleteById(id);
-	}
-	
-	public boolean existsByUsername(String username) {
-		return userRepository.existsByUsername(username);
-	}
-	
-	public boolean existsByEmail(String email) {
-		return userRepository.existsByEmail(email);
 	}
 }

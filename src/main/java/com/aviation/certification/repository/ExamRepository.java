@@ -13,6 +13,9 @@ import java.util.List;
 public interface ExamRepository extends JpaRepository<Exam, Long> {
 	List<Exam> findByIsVisible(Boolean isVisible);
 	
+	@Query("SELECT COUNT(e) FROM Exam e JOIN e.specializations s WHERE s = :specialization")
+	long countBySpecialization(@Param("specialization") Specialization specialization);
+	
 	@Query("SELECT e FROM Exam e JOIN e.specializations s WHERE s = :specialization AND e.isVisible = true")
 	List<Exam> findBySpecializationAndIsVisible(@Param("specialization") Specialization specialization);
 	

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование пользователя</title>
+    <link th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2>Редактирование пользователя</h2>
+        </div>
+        <div class="card-body">
+            <form th:action="@{'/admin/users/edit/' + ${user.id}}" method="post">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Логин</label>
+                    <input type="text" class="form-control" id="username" name="username"
+                           th:value="${user.username}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email"
+                           th:value="${user.email}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="firstName" class="form-label">Имя</label>
+                    <input type="text" class="form-control" id="firstName" name="firstName"
+                           th:value="${user.firstName}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="lastName" class="form-label">Фамилия</label>
+                    <input type="text" class="form-control" id="lastName" name="lastName"
+                           th:value="${user.lastName}" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <a th:href="@{/admin/users}" class="btn btn-secondary">Отмена</a>
+            </form>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,25 +1,25 @@
 package com.aviation.certification.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.context.annotation.*;
+import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import com.aviation.certification.service.UserDetailsServiceImpl;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+@EnableMethodSecurity
+class SecurityConfig {
+	private final UserDetailsService userDetailsService;
 	
-	private final UserDetailsServiceImpl userDetailsService;
-	
-	public SecurityConfig(UserDetailsServiceImpl userDetailsService) {
+	public SecurityConfig(UserDetailsService userDetailsService) {
 		this.userDetailsService = userDetailsService;
 	}
 	
@@ -42,28 +42,39 @@ public class SecurityConfig {
 	}
 	
 	@Bean
+	public AuthenticationSuccessHandler successHandler() {
+		return (request, response, authentication) -> {
+			if (authentication.getAuthorities().stream()
+					.anyMatch(grantedAuthority ->
+							grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) {
+				response.sendRedirect("/admin/dashboard");
+			} else if (authentication.getAuthorities().stream()
+					.anyMatch(grantedAuthority ->
+							grantedAuthority.getAuthority().equals("ROLE_CANDIDATE"))) {
+				response.sendRedirect("/candidate/dashboard");
+			} else {
+				response.sendRedirect("/");
+			}
+		};
+	}
+	
+	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(authz -> authz
 						.requestMatchers("/", "/home", "/register", "/login", "/css/**", "/js/**", "/images/**").permitAll()
-						.requestMatchers("/admin/**").hasRole("ADMIN")
-						.requestMatchers("/instructor/**").hasRole("INSTRUCTOR")
-						.requestMatchers("/candidate/**").hasRole("CANDIDATE")
 						.anyRequest().authenticated()
 				)
 				.formLogin(form -> form
 						.loginPage("/login")
-						.defaultSuccessUrl("/dashboard", true)
+						.successHandler(successHandler())
 						.permitAll()
 				)
 				.logout(logout -> logout
-						.logoutSuccessUrl("/home")
+						.logoutSuccessUrl("/login?logout")
 						.permitAll()
 				);
-		
 		return http.build();
 	}
-	
 }
-	

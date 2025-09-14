@@ -1,39 +1,35 @@
 package com.aviation.certification.controller;
 
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import com.aviation.certification.model.Role;
-import com.aviation.certification.model.Specialization;
-import com.aviation.certification.model.User;
-import com.aviation.certification.repository.RoleRepository;
-import com.aviation.certification.repository.SpecializationRepository;
-import com.aviation.certification.repository.UserRepository;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.*;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import com.aviation.certification.model.*;
+import com.aviation.certification.repository.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.*;
 
 @Controller
-public class RegistrationController {
+class RegistrationController {
 	private final UserRepository userRepository;
 	private final RoleRepository roleRepository;
 	private final SpecializationRepository specializationRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final AuthenticationManager authenticationManager;
 	
-	public RegistrationController(UserRepository userRepository, RoleRepository roleRepository,
-			SpecializationRepository specializationRepository, PasswordEncoder passwordEncoder,
-			AuthenticationManager authenticationManager) {
-		this.userRepository = userRepository;
-		this.roleRepository = roleRepository;
-		this.specializationRepository = specializationRepository;
-		this.passwordEncoder = passwordEncoder;
-		this.authenticationManager = authenticationManager;
+	public RegistrationController(UserRepository u, RoleRepository r, SpecializationRepository s,
+			PasswordEncoder p, AuthenticationManager a) {
+		this.userRepository = u;
+		this.roleRepository = r;
+		this.specializationRepository = s;
+		this.passwordEncoder = p;
+		this.authenticationManager = a;
 	}
 	
 	@GetMapping("/register")
@@ -43,48 +39,40 @@ public class RegistrationController {
 	}
 	
 	@PostMapping("/register")
-	public String registerUser(
-			@RequestParam String username,
-			@RequestParam String password,
-			@RequestParam String email,
-			@RequestParam String firstName,
-			@RequestParam String lastName,
-			@RequestParam String specializationCode,
-			Model model) {
-		
+	public String registerUser(@RequestParam String username, @RequestParam String password, @RequestParam String email,
+			@RequestParam String firstName, @RequestParam String lastName,
+			@RequestParam String specializationCode, Model model,
+			HttpServletRequest request, HttpServletResponse response) {
 		if (userRepository.existsByUsername(username)) {
-			model.addAttribute("error", "Username already exists");
+			model.addAttribute("error", "Пользователь с таким логином уже существует");
 			model.addAttribute("specializations", specializationRepository.findAll());
 			return "register";
 		}
-		
 		if (userRepository.existsByEmail(email)) {
-			model.addAttribute("error", "Email already exists");
+			model.addAttribute("error", "Пользователь с таким email уже существует");
 			model.addAttribute("specializations", specializationRepository.findAll());
 			return "register";
 		}
 		
-		// Создание нового пользователя
 		User user = new User(username, passwordEncoder.encode(password), email, firstName, lastName);
-		
-		// Назначение роли кандидата
 		Role candidateRole = roleRepository.findByName("ROLE_CANDIDATE")
-				.orElseThrow(() -> new RuntimeException("Error: Role not found."));
+				.orElseThrow(() -> new RuntimeException("Role not found"));
 		user.getRoles().add(candidateRole);
-		
-		// Добавление специализации
-		Specialization specialization = specializationRepository.findByCode(specializationCode)
-				.orElseThrow(() -> new RuntimeException("Error: Specialization not found."));
-		user.getSpecializations().add(specialization);
-		
+		Specialization spec = specializationRepository.findByCode(specializationCode)
+				.orElseThrow(() -> new RuntimeException("Specialization not found"));
+		user.getSpecializations().add(spec);
 		userRepository.save(user);
 		
-		// Автоматическая аутентификация после регистрации
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(username, password)
-		);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		
-		return "redirect:/dashboard";
+		// Auto-login
+		try {
+			UsernamePasswordAuthenticationToken authRequest =
+					new UsernamePasswordAuthenticationToken(username, password);
+			Authentication authentication = authenticationManager.authenticate(authRequest);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			
+			return "redirect:/candidate/dashboard";
+		} catch (Exception e) {
+			return "redirect:/login";
+		}
 	}
 }

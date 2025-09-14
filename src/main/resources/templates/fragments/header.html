@@ -46,10 +46,11 @@
                             Кандидат
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="candidateDropdown">
+                            <!-- В меню кандидата -->
                             <li><a class="dropdown-item" th:href="@{/candidate/dashboard}">Личный кабинет</a></li>
                             <li><a class="dropdown-item" th:href="@{/candidate/tests}">Доступные тесты</a></li>
                             <li><a class="dropdown-item" th:href="@{/candidate/results}">Мои результаты</a></li>
-                            <li><a class="dropdown-item" th:href="@{/materials}">Учебные материалы</a></li>
+                            <li><a class="dropdown-item" th:href="@{/candidate/materials}">Учебные материалы</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -67,13 +68,24 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li><span class="dropdown-item-text">
-                                Роль: <span sec:authentication="principal.authorities"></span>
-                            </span></li>
-                            <li><hr class="dropdown-divider"></li>
+                            Роль: <span th:each="role : ${#authentication.principal.roles}"
+                                        th:text="${role.name.replace('ROLE_', '')}"></span></span></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
                             <li><a class="dropdown-item" th:href="@{/profile}">Профиль</a></li>
-                            <li><a class="dropdown-item" th:href="@{/dashboard}">Панель управления</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" th:href="@{/logout}">Выход</a></li>
+                            <li><a class="dropdown-item"
+                                   th:href="${#authentication.principal.authorities[0].authority == 'ROLE_ADMIN' ? '/admin/dashboard' : '/candidate/dashboard'}">
+                                Панель управления
+                            </a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="d-inline">
+                                    <button type="submit" class="dropdown-item">Выход</button>
+                                </form>
+                            </li>
                         </ul>
                     </li>
                 </ul>

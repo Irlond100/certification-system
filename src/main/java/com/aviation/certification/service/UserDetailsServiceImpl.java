@@ -1,12 +1,8 @@
 package com.aviation.certification.service;
 
-
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.aviation.certification.model.User;
 import com.aviation.certification.repository.UserRepository;
 
@@ -24,6 +20,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		User user = userRepository.findByUsername(username)
 				.orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
 		
-		return UserDetailsImpl.build(user);
+		// Возвращаем наш User, который уже реализует UserDetails
+		return user;
 	}
 }
