@@ -1,12 +1,15 @@
 package com.aviation.certification.controller;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 
 import com.aviation.certification.model.Role;
 import com.aviation.certification.model.Specialization;
@@ -21,13 +24,16 @@ public class RegistrationController {
 	private final RoleRepository roleRepository;
 	private final SpecializationRepository specializationRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final AuthenticationManager authenticationManager;
 	
 	public RegistrationController(UserRepository userRepository, RoleRepository roleRepository,
-			SpecializationRepository specializationRepository, PasswordEncoder passwordEncoder) {
+			SpecializationRepository specializationRepository, PasswordEncoder passwordEncoder,
+			AuthenticationManager authenticationManager) {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
 		this.specializationRepository = specializationRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.authenticationManager = authenticationManager;
 	}
 	
 	@GetMapping("/register")
@@ -48,11 +54,13 @@ public class RegistrationController {
 		
 		if (userRepository.existsByUsername(username)) {
 			model.addAttribute("error", "Username already exists");
+			model.addAttribute("specializations", specializationRepository.findAll());
 			return "register";
 		}
 		
 		if (userRepository.existsByEmail(email)) {
 			model.addAttribute("error", "Email already exists");
+			model.addAttribute("specializations", specializationRepository.findAll());
 			return "register";
 		}
 		
@@ -71,6 +79,12 @@ public class RegistrationController {
 		
 		userRepository.save(user);
 		
-		return "redirect:/login?registered";
+		// Автоматическая аутентификация после регистрации
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(username, password)
+		);
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		
+		return "redirect:/dashboard";
 	}
 }

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Управление пользователями</title>
     <link th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
 </head>
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
@@ -40,13 +41,17 @@
                         <td>
                                 <span th:each="role : ${user.roles}"
                                       class="badge bg-secondary me-1"
-                                      th:text="${role.name}"></span>
+                                      th:text="${role.name.replace('ROLE_', '')}"></span>
                         </td>
                         <td th:text="${#temporals.format(user.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <a th:href="@{'/admin/users/edit/' + ${user.id}}" class="btn btn-outline-primary">Редактировать</a>
-                                <button class="btn btn-outline-danger" disabled>Удалить</button>
+                                <a th:href="@{'/admin/users/edit/' + ${user.id}}"
+                                   class="btn btn-outline-primary"
+                                   th:if="${!user.roles.?[name == 'ROLE_ADMIN'].empty}">Редактировать</a>
+                                <button class="btn btn-outline-danger"
+                                        th:if="${!user.roles.?[name == 'ROLE_ADMIN'].empty}"
+                                        disabled>Удалить</button>
                             </div>
                         </td>
                     </tr>

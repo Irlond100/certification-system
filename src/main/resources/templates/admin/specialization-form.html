@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${specialization.id != null} ? 'Редактирование специализации' : 'Создание специализации'"></title>
+    <link th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 th:text="${specialization.id != null} ? 'Редактирование специализации' : 'Создание специализации'"></h2>
+                </div>
+                <div class="card-body">
+                    <form th:action="${specialization.id != null} ? @{'/admin/specializations/edit/' + ${specialization.id}} : @{/admin/specializations/create}"
+                          method="post">
+                        <div class="mb-3">
+                            <label for="code" class="form-label">Код</label>
+                            <input type="text" class="form-control" id="code" name="code"
+                                   th:value="${specialization.code}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Название</label>
+                            <input type="text" class="form-control" id="name" name="name"
+                                   th:value="${specialization.name}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Описание</label>
+                            <textarea class="form-control" id="description" name="description"
+                                      rows="3" th:text="${specialization.description}"></textarea>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Сохранить</button>
+                            <a th:href="@{/admin/specializations}" class="btn btn-secondary">Отмена</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

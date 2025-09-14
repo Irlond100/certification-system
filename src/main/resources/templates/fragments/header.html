@@ -16,18 +16,6 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/}">Главная</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/materials}">Учебные материалы</a>
-                    </li>
-                    <li class="nav-item" sec:authorize="hasRole('CANDIDATE')">
-                        <a class="nav-link" th:href="@{/candidate/dashboard}">Личный кабинет</a>
-                    </li>
-                    <li class="nav-item" sec:authorize="hasRole('INSTRUCTOR')">
-                        <a class="nav-link" th:href="@{/instructor/dashboard}">Панель инструктора</a>
-                    </li>
                     <li class="nav-item dropdown" sec:authorize="hasRole('ADMIN')">
                         <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
@@ -36,8 +24,32 @@
                         <ul class="dropdown-menu" aria-labelledby="adminDropdown">
                             <li><a class="dropdown-item" th:href="@{/admin/dashboard}">Панель администратора</a></li>
                             <li><a class="dropdown-item" th:href="@{/admin/users}">Управление пользователями</a></li>
+                            <li><a class="dropdown-item" th:href="@{/admin/specializations}">Управление специализациями</a></li>
                             <li><a class="dropdown-item" th:href="@{/admin/tests}">Управление тестами</a></li>
                             <li><a class="dropdown-item" th:href="@{/admin/statistics}">Статистика</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown" sec:authorize="hasRole('INSTRUCTOR')">
+                        <a class="nav-link dropdown-toggle" href="#" id="instructorDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            Инструктор
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="instructorDropdown">
+                            <li><a class="dropdown-item" th:href="@{/instructor/dashboard}">Панель инструктора</a></li>
+                            <li><a class="dropdown-item" th:href="@{/instructor/tests}">Мои тесты</a></li>
+                            <li><a class="dropdown-item" th:href="@{/instructor/results}">Результаты</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown" sec:authorize="hasRole('CANDIDATE')">
+                        <a class="nav-link dropdown-toggle" href="#" id="candidateDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            Кандидат
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="candidateDropdown">
+                            <li><a class="dropdown-item" th:href="@{/candidate/dashboard}">Личный кабинет</a></li>
+                            <li><a class="dropdown-item" th:href="@{/candidate/tests}">Доступные тесты</a></li>
+                            <li><a class="dropdown-item" th:href="@{/candidate/results}">Мои результаты</a></li>
+                            <li><a class="dropdown-item" th:href="@{/materials}">Учебные материалы</a></li>
                         </ul>
                     </li>
                 </ul>

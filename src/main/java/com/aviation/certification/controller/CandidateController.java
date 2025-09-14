@@ -6,6 +6,8 @@ import com.aviation.certification.model.TestResult;
 import com.aviation.certification.model.User;
 import com.aviation.certification.service.TestService;
 import com.aviation.certification.service.UserService;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/candidate")
+@PreAuthorize("hasRole('CANDIDATE')")
 public class CandidateController {
 	private final TestService testService;
 	private final UserService userService;
@@ -25,6 +28,16 @@ public class CandidateController {
 	public CandidateController(TestService testService, UserService userService) {
 		this.testService = testService;
 		this.userService = userService;
+	}
+	
+	@GetMapping("/tests")
+	public String availableTests() {
+		return "candidate/tests";
+	}
+	
+	@GetMapping("/results")
+	public String myResults() {
+		return "candidate/results";
 	}
 	
 	@GetMapping("/dashboard")
