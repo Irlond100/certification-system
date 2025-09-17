@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование теста</title>
+    <link th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<main class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2>Редактирование теста</h2>
+        </div>
+        <div class="card-body">
+            <form th:action="@{'/admin/tests/edit/' + ${exam.id}}" method="post">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Название теста</label>
+                    <input type="text" class="form-control" id="title" name="title" th:value="${exam.title}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Описание</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" th:text="${exam.description}"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="duration" class="form-label">Длительность теста (минуты)</label>
+                    <input type="number" class="form-control" id="duration" name="duration"
+                           min="5" max="240" step="5" th:value="${exam.durationMinutes}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Специализации</label>
+                    <div th:each="spec : ${specializations}" class="form-check">
+                        <input class="form-check-input" type="checkbox" name="specializations"
+                               th:value="${spec.id}" th:id="'spec_' + ${spec.id}"
+                               th:checked="${exam.specializations.contains(spec)}">
+                        <label class="form-check-label" th:for="'spec_' + ${spec.id}" th:text="${spec.name}"></label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <a th:href="@{/admin/tests/manage}" class="btn btn-secondary">Отмена</a>
+            </form>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

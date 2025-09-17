@@ -21,12 +21,22 @@ public class TestService {
 		this.testResultRepository = testResultRepository;
 	}
 	
-	public List<Exam> getExamsBySpecialization(Specialization specialization) {
-		return examRepository.findBySpecializationAndIsVisible(specialization);
+	// Добавляем недостающие методы
+	public List<Exam> getAllTests() {
+		return examRepository.findAll();
+	}
+	
+	public Exam saveExam(Exam exam) {
+		return examRepository.save(exam);
 	}
 	
 	public Optional<Exam> getExamById(Long id) {
 		return examRepository.findById(id);
+	}
+	
+	// Остальные существующие методы остаются без изменений
+	public List<Exam> getExamsBySpecialization(Specialization specialization) {
+		return examRepository.findBySpecializationAndIsVisible(specialization);
 	}
 	
 	public List<TestResult> getUserTestResults(User user) {
