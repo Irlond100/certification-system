@@ -32,13 +32,13 @@
                     <h5>Добавить новую специализацию</h5>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/admin/specializations/create}" method="post" th:object="${newSpecialization}">
+                    <form th:action="@{/admin/specializations/create}" method="post">
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="code" class="form-label">Код *</label>
                                     <input type="text" class="form-control" id="code" name="code"
-                                           th:field="*{code}" required>
+                                           th:value="${newSpecialization?.code}" required>
                                     <div class="form-text">Уникальный код специализации</div>
                                 </div>
                             </div>
@@ -46,14 +46,14 @@
                                 <div class="mb-3">
                                     <label for="name" class="form-label">Название *</label>
                                     <input type="text" class="form-control" id="name" name="name"
-                                           th:field="*{name}" required>
+                                           th:value="${newSpecialization?.name}" required>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="description" class="form-label">Описание</label>
                                     <input type="text" class="form-control" id="description" name="description"
-                                           th:field="*{description}">
+                                           th:value="${newSpecialization?.description}">
                                 </div>
                             </div>
                         </div>
@@ -110,7 +110,7 @@
                 <h5 class="modal-title" id="editModalLabel">Редактирование специализации</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form th:action="@{/admin/specializations/edit/{id}(id=${spec.id})}" method="post">
+            <form id="editForm" method="post">
                 <div class="modal-body">
                     <input type="hidden" id="editId" name="id">
                     <div class="mb-3">
@@ -155,7 +155,7 @@
         modal.querySelector('#editDescription').value = description;
 
         // Обновляем action формы
-        var form = modal.querySelector('form');
+        var form = modal.querySelector('#editForm');
         form.action = '/admin/specializations/edit/' + id;
     });
 </script>

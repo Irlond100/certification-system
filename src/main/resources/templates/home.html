@@ -67,11 +67,12 @@
             transform: translateY(-5px);
         }
 
-        footer {
-            background-color: #343a40;
-            color: white;
-            padding: 1.5rem 0;
-            margin-top: auto;
+        .navbar-nav .nav-link {
+            padding: 0.5rem 1rem;
+        }
+
+        .start-test-btn {
+            margin-left: 1rem;
         }
     </style>
 </head>
@@ -79,6 +80,10 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <a class="navbar-brand" th:href="@{/}">АвиаТест</a>
+
+        <!-- Кнопка "Начать тестирование" -->
+        <a class="btn btn-primary start-test-btn" th:href="@{/login}">Начать тестирование</a>
+
         <div class="navbar-nav ms-auto">
             <a class="nav-link" th:href="@{/login}">Вход</a>
             <a class="nav-link" th:href="@{/register}">Регистрация</a>
@@ -111,9 +116,17 @@
     </div>
 </div>
 
-<footer>
-    <div class="container text-center">
-        <p class="mb-0">&copy; 2025 АвиаТест. Все права защищены.</p>
+<footer class="bg-dark text-white text-center py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 text-md-start">
+                <h5>✈️ АвиаТест</h5>
+                <p class="mb-0">Современная система тестирования авиационных специалистов.</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="mb-0">&copy; 2025 АвиаТест. Все права защищены.</p>
+            </div>
+        </div>
     </div>
 </footer>
 

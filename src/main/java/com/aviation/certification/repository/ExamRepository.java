@@ -14,7 +14,10 @@ import java.util.Optional;
 public interface ExamRepository extends JpaRepository<Exam, Long> {
 	List<Exam> findByIsVisible(Boolean isVisible);
 	
-	List<Exam> findAll();
+	// Удаляем проблемный метод и заменяем его правильным
+	@Query("SELECT DISTINCT e FROM Exam e LEFT JOIN FETCH e.questions LEFT JOIN FETCH e.specializations")
+	List<Exam> findAllWithAssociations();
+	
 	Optional<Exam> findById(Long id);
 	Exam save(Exam exam);
 	

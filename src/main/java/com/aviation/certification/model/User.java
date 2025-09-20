@@ -75,6 +75,8 @@ public class User implements UserDetails {
 		this.lastName = lastName;
 		this.enabled = true;
 		this.createdAt = LocalDateTime.now();
+		this.roles = new HashSet<>();
+		this.specializations = new HashSet<>();
 	}
 	
 	// UserDetails методы

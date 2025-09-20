@@ -1,40 +1,99 @@
 package com.aviation.certification.service;
 
-import com.aviation.certification.model.Exam;
-import com.aviation.certification.model.Specialization;
-import com.aviation.certification.model.TestResult;
-import com.aviation.certification.model.User;
-import com.aviation.certification.repository.ExamRepository;
-import com.aviation.certification.repository.TestResultRepository;
+import com.aviation.certification.model.*;
+import com.aviation.certification.repository.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Service
 public class TestService {
 	private final ExamRepository examRepository;
+	private final QuestionRepository questionRepository;
+	private final AnswerRepository answerRepository;
 	private final TestResultRepository testResultRepository;
+	private final SpecializationRepository specializationRepository;
 	
-	public TestService(ExamRepository examRepository, TestResultRepository testResultRepository) {
+	public TestService(ExamRepository examRepository,
+			QuestionRepository questionRepository,
+			AnswerRepository answerRepository,
+			TestResultRepository testResultRepository,
+			SpecializationRepository specializationRepository) {
 		this.examRepository = examRepository;
+		this.questionRepository = questionRepository;
+		this.answerRepository = answerRepository;
 		this.testResultRepository = testResultRepository;
+		this.specializationRepository = specializationRepository;
 	}
 	
-	// Добавляем недостающие методы
-	public List<Exam> getAllTests() {
-		return examRepository.findAll();
+	@Transactional(readOnly = true)
+	public Optional<Exam> getExamById(Long id) {
+		return examRepository.findById(id);
+	}
+	
+	@Transactional(readOnly = true)
+	public List<Question> getQuestionsByExamId(Long examId) {
+		return questionRepository.findByExamId(examId);
 	}
 	
 	public Exam saveExam(Exam exam) {
 		return examRepository.save(exam);
 	}
 	
-	public Optional<Exam> getExamById(Long id) {
-		return examRepository.findById(id);
+	@Transactional
+	public void deleteExam(Long id) {
+		Optional<Exam> exam = examRepository.findById(id);
+		if (exam.isPresent()) {
+			// Удаляем все вопросы и ответы связанные с тестом
+			for (Question question : exam.get().getQuestions()) {
+				answerRepository.deleteByQuestionId(question.getId());
+				questionRepository.delete(question);
+			}
+			examRepository.deleteById(id);
+		}
 	}
 	
-	// Остальные существующие методы остаются без изменений
+	public Question saveQuestion(Question question) {
+		return questionRepository.save(question);
+	}
+	
+	public Optional<Question> getQuestionById(Long id) {
+		return questionRepository.findById(id);
+	}
+	
+	public List<Exam> getAllTests() {
+		return examRepository.findAllWithAssociations();
+	}
+	
+	@Transactional
+	public void deleteQuestion(Long id) {
+		// Сначала удаляем все ответы вопроса
+		answerRepository.deleteByQuestionId(id);
+		// Затем удаляем сам вопрос
+		questionRepository.deleteById(id);
+	}
+	
+	// Методы для работы с ответами
+	public List<Answer> getAnswersByQuestionId(Long questionId) {
+		return answerRepository.findByQuestionId(questionId);
+	}
+	
+	public Answer saveAnswer(Answer answer) {
+		return answerRepository.save(answer);
+	}
+	
+	public Optional<Answer> getAnswerById(Long id) {
+		return answerRepository.findById(id);
+	}
+	
+	public void deleteAnswersByQuestionId(Long questionId) {
+		answerRepository.deleteByQuestionId(questionId);
+	}
+	
+	// Остальные существующие методы
 	public List<Exam> getExamsBySpecialization(Specialization specialization) {
 		return examRepository.findBySpecializationAndIsVisible(specialization);
 	}
@@ -45,5 +104,9 @@ public class TestService {
 	
 	public TestResult saveTestResult(TestResult testResult) {
 		return testResultRepository.save(testResult);
+	}
+	
+	public List<Specialization> getAllSpecializations() {
+		return specializationRepository.findAll();
 	}
 }

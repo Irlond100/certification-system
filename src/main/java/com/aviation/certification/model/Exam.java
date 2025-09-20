@@ -8,6 +8,39 @@ import java.util.Set;
 @Entity
 @Table(name = "tests")
 public class Exam {
+	
+	@Column(name = "passing_score")
+	private Integer passingScore;
+	
+	@Column(name = "questions_count")
+	private Integer questionsCount;
+	
+	public String getTheme() {
+		return theme;
+	}
+	
+	public void setTheme(String theme) {
+		this.theme = theme;
+	}
+	
+	public Integer getQuestionsCount() {
+		return questionsCount;
+	}
+	
+	public void setQuestionsCount(Integer questionsCount) {
+		this.questionsCount = questionsCount;
+	}
+	
+	public Integer getPassingScore() {
+		return passingScore;
+	}
+	
+	public void setPassingScore(Integer passingScore) {
+		this.passingScore = passingScore;
+	}
+	
+	@Column(name = "theme")
+	private String theme;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -28,15 +61,14 @@ public class Exam {
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 	
+	@OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<Question> questions = new HashSet<>();
+	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "test_specializations",
 			joinColumns = @JoinColumn(name = "test_id"),
 			inverseJoinColumns = @JoinColumn(name = "specialization_id"))
 	private Set<Specialization> specializations = new HashSet<>();
-	
-	@OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Set<Question> questions = new HashSet<>();
-	
 	// Конструкторы
 	public Exam() {
 		this.isVisible = true;

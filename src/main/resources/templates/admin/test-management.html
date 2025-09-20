@@ -37,13 +37,19 @@
                         <td th:text="${test.title}"></td>
                         <td th:text="${test.description}"></td>
                         <td th:text="${test.durationMinutes} + ' мин'"></td>
-                        <td th:text="${test.questions.size()}"></td>
+                        <td th:text="${test.questions != null ? test.questions.size() : 0}"></td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <a th:href="@{'/admin/tests/edit/' + ${test.id}}" class="btn btn-primary">Редактировать</a>
-                                <a th:href="@{'/admin/tests/questions/' + ${test.id}}" class="btn btn-info">Вопросы</a>
+                                <a th:href="@{'/admin/tests/edit/' + ${test.id}}" class="btn btn-primary">
+                                    <i class="bi bi-pencil"></i> Редактировать
+                                </a>
+                                <a th:href="@{'/admin/tests/questions/' + ${test.id}}" class="btn btn-info">
+                                    <i class="bi bi-question-circle"></i> Вопросы
+                                </a>
                                 <a th:href="@{'/admin/tests/delete/' + ${test.id}}" class="btn btn-danger"
-                                   onclick="return confirm('Вы уверены, что хотите удалить этот тест?')">Удалить</a>
+                                   onclick="return confirm('Вы уверены, что хотите удалить этот тест?')">
+                                    <i class="bi bi-trash"></i> Удалить
+                                </a>
                             </div>
                         </td>
                     </tr>

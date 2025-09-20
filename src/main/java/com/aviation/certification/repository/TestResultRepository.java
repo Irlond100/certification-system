@@ -1,5 +1,6 @@
 package com.aviation.certification.repository;
 
+import com.aviation.certification.model.Exam;
 import com.aviation.certification.model.Specialization;
 import com.aviation.certification.model.TestResult;
 import com.aviation.certification.model.User;
@@ -21,4 +22,6 @@ public interface TestResultRepository extends JpaRepository<TestResult, Long> {
 	
 	List<TestResult> findByUserOrderByCompletedAtDesc(User user);
 	
+	@Query("SELECT DISTINCT e FROM Exam e LEFT JOIN FETCH e.questions q LEFT JOIN FETCH e.specializations")
+	List<Exam> findAllWithQuestionsAndSpecializations();
 }
