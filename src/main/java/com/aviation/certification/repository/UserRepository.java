@@ -6,14 +6,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-
 import com.aviation.certification.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 	
-	@Query("SELECT u FROM User u LEFT JOIN FETCH u.roles LEFT JOIN FETCH u.specializations WHERE u.username = " +
-			":username")
+	@Query("SELECT u FROM User u LEFT JOIN FETCH u.roles LEFT JOIN FETCH u.specializations WHERE u.username = :username")
 	Optional<User> findByUsernameWithRolesAndSpecializations(@Param("username") String username);
 	
 	Optional<User> findByUsername(String username);
@@ -23,5 +21,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	Boolean existsByUsername(String username);
 	
 	Boolean existsByEmail(String email);
-	
 }

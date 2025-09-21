@@ -25,7 +25,7 @@
                             <li><a class="dropdown-item" th:href="@{/admin/dashboard}">Панель администратора</a></li>
                             <li><a class="dropdown-item" th:href="@{/admin/users}">Управление пользователями</a></li>
                             <li><a class="dropdown-item" th:href="@{/admin/specializations}">Управление специализациями</a></li>
-                            <li><a class="dropdown-item" th:href="@{/admin/tests}">Управление тестами</a></li>
+                            <li><a class="dropdown-item" th:href="@{/admin/tests/manage}">Управление тестами</a></li>
                             <li><a class="dropdown-item" th:href="@{/admin/statistics}">Статистика</a></li>
                         </ul>
                     </li>
@@ -93,5 +93,6 @@
         </div>
     </nav>
 </header>
+<script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

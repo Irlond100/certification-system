@@ -21,12 +21,16 @@ public interface ExamRepository extends JpaRepository<Exam, Long> {
 	Optional<Exam> findById(Long id);
 	Exam save(Exam exam);
 	
-	@Query("SELECT COUNT(e) FROM Exam e JOIN e.specializations s WHERE s = :specialization")
-	long countBySpecialization(@Param("specialization") Specialization specialization);
-	
 	@Query("SELECT e FROM Exam e JOIN e.specializations s WHERE s = :specialization AND e.isVisible = true")
 	List<Exam> findBySpecializationAndIsVisible(@Param("specialization") Specialization specialization);
 	
 	@Query("SELECT e FROM Exam e JOIN e.specializations s WHERE s.code = :specializationCode AND e.isVisible = true")
 	List<Exam> findBySpecializationCodeAndIsVisible(@Param("specializationCode") String specializationCode);
+	
+	@Query("SELECT COUNT(e) FROM Exam e JOIN e.specializations s WHERE s = :specialization")
+	long countBySpecialization(@Param("specialization") Specialization specialization);
+	
+	@Query("SELECT DISTINCT e FROM Exam e LEFT JOIN FETCH e.specializations WHERE e.id = :id")
+	Optional<Exam> findByIdWithSpecializations(@Param("id") Long id);
+	
 }

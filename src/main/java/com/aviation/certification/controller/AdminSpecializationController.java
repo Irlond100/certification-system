@@ -86,19 +86,17 @@ public class AdminSpecializationController {
 		}
 	}
 	
-	@GetMapping("/delete/{id}")
+	@PostMapping("/delete/{id}")
 	public String deleteSpecialization(@PathVariable Long id, Model model) {
 		try {
 			specializationRepository.deleteById(id);
 			return "redirect:/admin/specializations?success";
 		} catch (DataIntegrityViolationException e) {
 			model.addAttribute("error", "Невозможно удалить специализацию: есть связанные данные");
-			model.addAttribute("specializations", specializationRepository.findAll());
-			return "admin/specializations";
+			return listSpecializations(model);
 		} catch (Exception e) {
 			model.addAttribute("error", "Ошибка при удалении специализации: " + e.getMessage());
-			model.addAttribute("specializations", specializationRepository.findAll());
-			return "admin/specializations";
+			return listSpecializations(model);
 		}
 	}
 }

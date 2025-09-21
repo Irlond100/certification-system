@@ -47,7 +47,7 @@ class SecurityConfig {
 			if (authentication.getAuthorities().stream()
 					.anyMatch(grantedAuthority ->
 							grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) {
-				response.sendRedirect("/admin/dashboard");
+				response.sendRedirect("/admin/dashboard"); // Изменено обратно на /admin/dashboard
 			} else if (authentication.getAuthorities().stream()
 					.anyMatch(grantedAuthority ->
 							grantedAuthority.getAuthority().equals("ROLE_CANDIDATE"))) {
@@ -63,7 +63,13 @@ class SecurityConfig {
 		http
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(authz -> authz
+						// Сначала специфичные правила
+						.requestMatchers("/admin/**").hasRole("ADMIN")
+						.requestMatchers("/candidate/**").hasRole("CANDIDATE")
+						.requestMatchers("/instructor/**").hasRole("INSTRUCTOR")
+						// Затем общие правила
 						.requestMatchers("/", "/home", "/register", "/login", "/css/**", "/js/**", "/images/**").permitAll()
+						// В конце общее правило
 						.anyRequest().authenticated()
 				)
 				.formLogin(form -> form

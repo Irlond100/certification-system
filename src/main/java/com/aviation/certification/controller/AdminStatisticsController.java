@@ -29,30 +29,45 @@ public class AdminStatisticsController {
 	
 	@GetMapping("/statistics")
 	public String showStatistics(Model model) {
-		// Базовая статистика
-		long totalUsers = userRepository.count();
-		long totalTests = examRepository.count();
-		long totalResults = testResultRepository.count();
-		
-		model.addAttribute("totalUsers", totalUsers);
-		model.addAttribute("totalTests", totalTests);
-		model.addAttribute("totalResults", totalResults);
-		
-		// Статистика по специализациям (заглушка)
-		List<Map<String, Object>> specializationStats = new ArrayList<>();
-		List<Specialization> specializations = specializationRepository.findAll();
-		
-		for (Specialization spec : specializations) {
-			Map<String, Object> stat = new HashMap<>();
-			stat.put("specializationName", spec.getName());
-			stat.put("testCount", 5); // Заглушка
-			stat.put("averageScore", 75); // Заглушка
-			stat.put("attemptCount", 10); // Заглушка
+		try {
+			long totalUsers = userRepository.count();
+			long totalTests = examRepository.count();
+			long totalResults = testResultRepository.count();
 			
-			specializationStats.add(stat);
+			model.addAttribute("totalUsers", totalUsers);
+			model.addAttribute("totalTests", totalTests);
+			model.addAttribute("totalResults", totalResults);
+			
+			List<Map<String, Object>> specializationStats = new ArrayList<>();
+			List<Specialization> specializations = specializationRepository.findAll();
+			
+			for (Specialization spec : specializations) {
+				Map<String, Object> stat = new HashMap<>();
+				stat.put("specializationName", spec.getName());
+				
+				// Реальная статистика
+				long testCount = examRepository.countBySpecialization(spec);
+				long attemptCount = testResultRepository.countBySpecialization(spec);
+				
+				stat.put("testCount", testCount);
+				stat.put("attemptCount", attemptCount);
+				
+				// Проверка на наличие данных
+				if (attemptCount > 0) {
+					// Здесь должна быть логика расчета среднего балла
+					stat.put("averageScore", "75"); // Заглушка
+				} else {
+					stat.put("averageScore", "Нет данных");
+				}
+				
+				specializationStats.add(stat);
+			}
+			
+			model.addAttribute("specializationStats", specializationStats);
+			
+		} catch (Exception e) {
+			model.addAttribute("error", "Ошибка при загрузке статистики: " + e.getMessage());
 		}
-		
-		model.addAttribute("specializationStats", specializationStats);
 		
 		return "admin/statistics";
 	}

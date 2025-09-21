@@ -37,9 +37,9 @@
                             <div id="answers-container">
                                 <div class="answer-row mb-2">
                                     <div class="input-group">
-                                        <span class="input-group-text">
-                                            <input type="checkbox" name="correctAnswers" value="0" class="form-check-input">
-                                        </span>
+                    <span class="input-group-text">
+                        <input type="checkbox" name="correctAnswers" value="0" class="form-check-input">
+                    </span>
                                         <input type="text" name="answers" class="form-control" placeholder="Текст ответа" required>
                                         <button type="button" class="btn btn-danger remove-answer" disabled>
                                             <i class="bi bi-trash"></i>
@@ -48,9 +48,9 @@
                                 </div>
                                 <div class="answer-row mb-2">
                                     <div class="input-group">
-                                        <span class="input-group-text">
-                                            <input type="checkbox" name="correctAnswers" value="1" class="form-check-input">
-                                        </span>
+                    <span class="input-group-text">
+                        <input type="checkbox" name="correctAnswers" value="1" class="form-check-input">
+                    </span>
                                         <input type="text" name="answers" class="form-control" placeholder="Текст ответа" required>
                                         <button type="button" class="btn btn-danger remove-answer">
                                             <i class="bi bi-trash"></i>
@@ -174,5 +174,6 @@
         }
     });
 </script>
+<script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

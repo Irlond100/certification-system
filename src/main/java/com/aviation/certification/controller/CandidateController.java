@@ -1,6 +1,9 @@
 package com.aviation.certification.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -29,12 +32,14 @@ public class CandidateController { // Добавляем public
 	@GetMapping("/dashboard")
 	public String dashboard(Authentication authentication, Model model) {
 		User user = (User) authentication.getPrincipal();
-		if (!user.getSpecializations().isEmpty()) {
-			// Упрощенная логика, нужно улучшить для поддержки нескольких специализаций
-			Specialization specialization = user.getSpecializations().iterator().next();
-			List<Exam> availableExams = testService.getExamsBySpecialization(specialization);
-			model.addAttribute("availableExams", availableExams);
+		List<Exam> availableExams = new ArrayList<>();
+		
+		// Получаем тесты для всех специализаций пользователя
+		for (Specialization specialization : user.getSpecializations()) {
+			availableExams.addAll(testService.getExamsBySpecialization(specialization));
 		}
+		
+		model.addAttribute("availableExams", availableExams);
 		model.addAttribute("user", user);
 		model.addAttribute("testHistory", testService.getUserTestResults(user));
 		return "candidate/dashboard";

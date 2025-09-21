@@ -39,40 +39,51 @@ class RegistrationController {
 	}
 	
 	@PostMapping("/register")
-	public String registerUser(@RequestParam String username, @RequestParam String password, @RequestParam String email,
-			@RequestParam String firstName, @RequestParam String lastName,
-			@RequestParam String specializationCode, Model model,
-			HttpServletRequest request, HttpServletResponse response) {
+	public String registerUser(@RequestParam String username,
+			@RequestParam String password,
+			@RequestParam String email,
+			@RequestParam String firstName,
+			@RequestParam String lastName,
+			@RequestParam String specializationCode,
+			Model model,
+			HttpServletRequest request) {
+		
 		if (userRepository.existsByUsername(username)) {
 			model.addAttribute("error", "Пользователь с таким логином уже существует");
 			model.addAttribute("specializations", specializationRepository.findAll());
 			return "register";
 		}
+		
 		if (userRepository.existsByEmail(email)) {
 			model.addAttribute("error", "Пользователь с таким email уже существует");
 			model.addAttribute("specializations", specializationRepository.findAll());
 			return "register";
 		}
 		
-		User user = new User(username, passwordEncoder.encode(password), email, firstName, lastName);
-		Role candidateRole = roleRepository.findByName("ROLE_CANDIDATE")
-				.orElseThrow(() -> new RuntimeException("Role not found"));
-		user.getRoles().add(candidateRole);
-		Specialization spec = specializationRepository.findByCode(specializationCode)
-				.orElseThrow(() -> new RuntimeException("Specialization not found"));
-		user.getSpecializations().add(spec);
-		userRepository.save(user);
-		
-		// Auto-login
 		try {
+			User user = new User(username, passwordEncoder.encode(password), email, firstName, lastName);
+			Role candidateRole = roleRepository.findByName("ROLE_CANDIDATE")
+					.orElseThrow(() -> new RuntimeException("Role not found"));
+			user.getRoles().add(candidateRole);
+			
+			Specialization spec = specializationRepository.findByCode(specializationCode)
+					.orElseThrow(() -> new RuntimeException("Specialization not found"));
+			user.getSpecializations().add(spec);
+			
+			userRepository.save(user);
+			
+			// Автоматический вход
 			UsernamePasswordAuthenticationToken authRequest =
 					new UsernamePasswordAuthenticationToken(username, password);
 			Authentication authentication = authenticationManager.authenticate(authRequest);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 			
 			return "redirect:/candidate/dashboard";
+			
 		} catch (Exception e) {
-			return "redirect:/login";
+			model.addAttribute("error", "Ошибка при регистрации: " + e.getMessage());
+			model.addAttribute("specializations", specializationRepository.findAll());
+			return "register";
 		}
 	}
 }

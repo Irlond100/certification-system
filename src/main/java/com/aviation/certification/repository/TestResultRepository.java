@@ -16,12 +16,14 @@ import java.util.List;
 public interface TestResultRepository extends JpaRepository<TestResult, Long> {
 	
 	List<TestResult> findByUser(User user);
-	
-	@Query("SELECT COUNT(tr) FROM TestResult tr JOIN tr.exam e JOIN e.specializations s WHERE s = :specialization")
-	long countBySpecialization(@Param("specialization") Specialization specialization);
-	
 	List<TestResult> findByUserOrderByCompletedAtDesc(User user);
 	
 	@Query("SELECT DISTINCT e FROM Exam e LEFT JOIN FETCH e.questions q LEFT JOIN FETCH e.specializations")
 	List<Exam> findAllWithQuestionsAndSpecializations();
+	
+	@Query("SELECT COUNT(tr) FROM TestResult tr JOIN tr.exam e JOIN e.specializations s WHERE s = :specialization")
+	long countBySpecialization(@Param("specialization") Specialization specialization);
+	
+	@Query("SELECT AVG(tr.score) FROM TestResult tr JOIN tr.exam e JOIN e.specializations s WHERE s = :specialization")
+	Double getAverageScoreBySpecialization(@Param("specialization") Specialization specialization);
 }

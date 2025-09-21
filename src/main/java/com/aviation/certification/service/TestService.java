@@ -29,9 +29,24 @@ public class TestService {
 		this.specializationRepository = specializationRepository;
 	}
 	
-	@Transactional(readOnly = true)
 	public Optional<Exam> getExamById(Long id) {
-		return examRepository.findById(id);
+		return examRepository.findByIdWithSpecializations(id);
+	}
+	
+	public List<Exam> getAllTests() {
+		return examRepository.findAllWithAssociations();
+	}
+	
+	public Optional<Question> getQuestionById(Long id) {
+		return questionRepository.findById(id);
+	}
+	
+	public List<Answer> getAnswersByQuestionId(Long questionId) {
+		return answerRepository.findByQuestionId(questionId);
+	}
+	
+	public List<Exam> getExamsBySpecialization(Specialization specialization) {
+		return examRepository.findBySpecializationAndIsVisible(specialization);
 	}
 	
 	@Transactional(readOnly = true)
@@ -60,25 +75,12 @@ public class TestService {
 		return questionRepository.save(question);
 	}
 	
-	public Optional<Question> getQuestionById(Long id) {
-		return questionRepository.findById(id);
-	}
-	
-	public List<Exam> getAllTests() {
-		return examRepository.findAllWithAssociations();
-	}
-	
 	@Transactional
 	public void deleteQuestion(Long id) {
 		// Сначала удаляем все ответы вопроса
 		answerRepository.deleteByQuestionId(id);
 		// Затем удаляем сам вопрос
 		questionRepository.deleteById(id);
-	}
-	
-	// Методы для работы с ответами
-	public List<Answer> getAnswersByQuestionId(Long questionId) {
-		return answerRepository.findByQuestionId(questionId);
 	}
 	
 	public Answer saveAnswer(Answer answer) {
@@ -91,11 +93,6 @@ public class TestService {
 	
 	public void deleteAnswersByQuestionId(Long questionId) {
 		answerRepository.deleteByQuestionId(questionId);
-	}
-	
-	// Остальные существующие методы
-	public List<Exam> getExamsBySpecialization(Specialization specialization) {
-		return examRepository.findBySpecializationAndIsVisible(specialization);
 	}
 	
 	public List<TestResult> getUserTestResults(User user) {

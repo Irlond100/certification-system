@@ -25,7 +25,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="duration" class="form-label">Длительность теста (минуты)</label>
-                    <input type="number" class="form-control" id="duration" name="duration"
+                    <input type="number" class="form-control" id="duration" name="durationMinutes"
                            min="5" max="240" step="5" th:value="${exam.durationMinutes}" required>
                 </div>
                 <div class="mb-3">
@@ -33,7 +33,7 @@
                     <div th:each="spec : ${specializations}" class="form-check">
                         <input class="form-check-input" type="checkbox" name="specializations"
                                th:value="${spec.id}" th:id="'spec_' + ${spec.id}"
-                               th:checked="${exam.specializations.contains(spec)}">
+                               th:checked="${#lists.contains(exam.specializations.![id], spec.id)}">
                         <label class="form-check-label" th:for="'spec_' + ${spec.id}" th:text="${spec.name}"></label>
                     </div>
                 </div>
@@ -45,5 +45,6 @@
 </main>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

@@ -88,10 +88,12 @@
                                                  data-bs-name=${spec.name}, data-bs-description=${spec.description}">
                                     <i class="bi bi-pencil"></i> Редактировать
                                 </button>
-                                <a th:href="@{'/admin/specializations/delete/' + ${spec.id}}" class="btn btn-danger"
-                                   onclick="return confirm('Вы уверены, что хотите удалить эту специализацию?')">
-                                    <i class="bi bi-trash"></i> Удалить
-                                </a>
+                                <form th:action="@{'/admin/specializations/delete/' + ${spec.id}}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Вы уверены, что хотите удалить эту специализацию?')">
+                                        <i class="bi bi-trash"></i> Удалить
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
@@ -159,5 +161,6 @@
         form.action = '/admin/specializations/edit/' + id;
     });
 </script>
+<script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

@@ -6,92 +6,87 @@
     <title>Регистрация</title>
     <link th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}" rel="stylesheet">
     <style>
-        .gradient-custom {
-            background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1))
+        .registration-container {
+            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .registration-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        .registration-header {
+            background: #007bff;
+            color: white;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            padding: 20px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-<div th:replace="~{fragments/header :: header}"></div>
+<div class="registration-container">
+    <div class="registration-card">
+        <div class="registration-header">
+            <h3>Регистрация в АвиаТест</h3>
+        </div>
+        <div class="card-body p-4">
+            <!-- Сообщения об ошибках -->
+            <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
 
-<section class="gradient-custom">
-    <div class="container py-5">
-        <div class="row d-flex justify-content-center align-items-center">
-            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                <div class="card bg-dark text-white" style="border-radius: 1rem;">
-                    <div class="card-body p-5 text-center">
-                        <div class="mb-4">
-                            <h2 class="fw-bold mb-2 text-uppercase">Регистрация</h2>
-                            <p class="text-white-50 mb-4">Заполните форму для создания аккаунта</p>
-                        </div>
-
-                        <!-- Сообщения об ошибках -->
-                        <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
-
-                        <form th:action="@{/register}" method="post">
-                            <div class="row">
-                                <div class="col-md-6 mb-4">
-                                    <div class="form-outline form-white">
-                                        <input type="text" id="firstName" name="firstName"
-                                               class="form-control form-control-lg" required autofocus>
-                                        <label class="form-label" for="firstName">Имя</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 mb-4">
-                                    <div class="form-outline form-white">
-                                        <input type="text" id="lastName" name="lastName"
-                                               class="form-control form-control-lg" required>
-                                        <label class="form-label" for="lastName">Фамилия</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-outline form-white mb-4">
-                                <input type="text" id="username" name="username"
-                                       class="form-control form-control-lg" required>
-                                <label class="form-label" for="username">Логин</label>
-                            </div>
-
-                            <div class="form-outline form-white mb-4">
-                                <input type="email" id="email" name="email"
-                                       class="form-control form-control-lg" required>
-                                <label class="form-label" for="email">Email</label>
-                            </div>
-
-                            <div class="form-outline form-white mb-4">
-                                <input type="password" id="password" name="password"
-                                       class="form-control form-control-lg" required>
-                                <label class="form-label" for="password">Пароль</label>
-                            </div>
-
-                            <div class="form-outline form-white mb-4">
-                                <select class="form-select form-select-lg" id="specializationCode"
-                                        name="specializationCode" required>
-                                    <option value="">Выберите специализацию</option>
-                                    <option th:each="spec : ${specializations}"
-                                            th:value="${spec.code}"
-                                            th:text="${spec.name}"></option>
-                                </select>
-                            </div>
-
-                            <button class="btn btn-outline-light btn-lg px-5 mb-3" type="submit">
-                                Зарегистрироваться
-                            </button>
-                        </form>
-
-                        <div>
-                            <p class="mb-0">Уже есть аккаунт?
-                                <a th:href="@{/login}" class="text-white-50 fw-bold">Войдите</a>
-                            </p>
-                        </div>
+            <form th:action="@{/register}" method="post">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="firstName" class="form-label">Имя</label>
+                        <input type="text" class="form-control" id="firstName" name="firstName" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="lastName" class="form-label">Фамилия</label>
+                        <input type="text" class="form-control" id="lastName" name="lastName" required>
                     </div>
                 </div>
-            </div>
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">Логин</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Пароль</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="specializationCode" class="form-label">Специализация</label>
+                    <select class="form-select" id="specializationCode" name="specializationCode" required>
+                        <option value="">Выберите специализацию</option>
+                        <option th:each="spec : ${specializations}"
+                                th:value="${spec.code}"
+                                th:text="${spec.name}"></option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 btn-lg">Зарегистрироваться</button>
+
+                <div class="text-center mt-3">
+                    <p>Уже есть аккаунт? <a th:href="@{/login}">Войдите</a></p>
+                </div>
+            </form>
         </div>
     </div>
-</section>
-
-<div th:replace="~{fragments/footer :: footer}"></div>
+</div>
 
 <script th:src="@{/webjars/bootstrap/5.3.0/js/bootstrap.bundle.min.js}"></script>
 </body>

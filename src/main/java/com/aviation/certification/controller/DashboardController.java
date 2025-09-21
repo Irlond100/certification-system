@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.aviation.certification.service.UserService;
 
 @Controller
-public class DashboardController { // Добавляем public
+public class DashboardController {
 	private final UserService userService;
 	
 	public DashboardController(UserService userService) {
@@ -18,7 +18,7 @@ public class DashboardController { // Добавляем public
 		if (authentication.getAuthorities().stream()
 				.anyMatch(grantedAuthority ->
 						grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) {
-			return "redirect:/admin/dashboard";
+			return "redirect:/admin/dashboard"; // Изменено с /admin/tests/manage
 		} else if (authentication.getAuthorities().stream()
 				.anyMatch(grantedAuthority ->
 						grantedAuthority.getAuthority().equals("ROLE_CANDIDATE"))) {

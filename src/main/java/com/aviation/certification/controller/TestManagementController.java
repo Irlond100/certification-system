@@ -1,12 +1,16 @@
 // TestManagementController.java
 package com.aviation.certification.controller;
 
+import jakarta.transaction.Transactional;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import com.aviation.certification.model.*;
 import com.aviation.certification.service.TestService;
+
 import org.springframework.security.core.Authentication;
 
 import java.util.List;
@@ -15,6 +19,7 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/admin/tests")
 @PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR')")
+@Transactional
 public class TestManagementController {
 	
 	private final TestService testService;
@@ -39,7 +44,8 @@ public class TestManagementController {
 	@PostMapping("/create")
 	public String createTest(@ModelAttribute Exam exam,
 			@RequestParam(value = "specializations", required = false) List<Long> specializationIds,
-			Authentication authentication, Model model) {
+			Authentication authentication, Model model)
+	{
 		try {
 			// Проверка на выбор специализаций
 			if (specializationIds == null || specializationIds.isEmpty()) {
@@ -83,6 +89,7 @@ public class TestManagementController {
 	}
 	
 	@GetMapping("/edit/{id}")
+	@Transactional
 	public String editTest(@PathVariable Long id, Model model) {
 		Optional<Exam> exam = testService.getExamById(id);
 		if (exam.isPresent()) {
@@ -95,7 +102,8 @@ public class TestManagementController {
 	
 	@PostMapping("/edit/{id}")
 	public String updateTest(@PathVariable Long id, @ModelAttribute Exam exam,
-			@RequestParam("specializations") List<Long> specializationIds) {
+			@RequestParam("specializations") List<Long> specializationIds)
+	{
 		exam.setId(id);
 		
 		exam.getSpecializations().clear();
@@ -123,32 +131,105 @@ public class TestManagementController {
 		return "redirect:/admin/tests/manage";
 	}
 	
-	@PostMapping("/questions/{testId}/add")
-	public String addQuestion(@PathVariable Long testId, @ModelAttribute Question question,
-			@RequestParam("answers") List<String> answerTexts,
+	@GetMapping("/questions/edit/{questionId}")
+	@Transactional
+	public String editQuestionForm(@PathVariable Long questionId, Model model) {
+		Optional<Question> question = testService.getQuestionById(questionId);
+		if (question.isPresent()) {
+			model.addAttribute("question", question.get());
+			model.addAttribute("answers", testService.getAnswersByQuestionId(questionId));
+			return "admin/question-edit";
+		}
+		return "redirect:/admin/tests/manage";
+	}
+	
+	@PostMapping("/questions/edit/{questionId}")
+	@Transactional
+	public String updateQuestion(@PathVariable Long questionId,
+			@RequestParam("text") String questionText,
+			@RequestParam(value = "answers", required = false) List<String> answerTexts,
 			@RequestParam(value = "correctAnswers", required = false) List<Integer> correctAnswerIndices,
-			@RequestParam(value = "multipleCorrect", defaultValue = "false") Boolean multipleCorrect) {
-		Optional<Exam> exam = testService.getExamById(testId);
-		if (exam.isPresent()) {
-			question.setExam(exam.get());
+			@RequestParam(value = "multipleCorrect", defaultValue = "false") Boolean multipleCorrect)
+	{
+		
+		Optional<Question> questionOpt = testService.getQuestionById(questionId);
+		if (questionOpt.isPresent()) {
+			Question question = questionOpt.get();
+			question.setText(questionText);
 			question.setQuestionType(multipleCorrect ? "MULTIPLE_CHOICE" : "SINGLE_CHOICE");
 			
-			Question savedQuestion = testService.saveQuestion(question);
+			testService.saveQuestion(question);
 			
-			// Добавьте ответы
-			for (int i = 0; i < answerTexts.size(); i++) {
-				if (answerTexts.get(i) != null && !answerTexts.get(i).trim().isEmpty()) {
-					Answer answer = new Answer();
-					answer.setQuestion(savedQuestion);
-					answer.setText(answerTexts.get(i));
-					answer.setIsCorrect(correctAnswerIndices != null && correctAnswerIndices.contains(i));
-					testService.saveAnswer(answer);
+			// Удаляем старые ответы
+			testService.deleteAnswersByQuestionId(questionId);
+			
+			// Добавляем новые ответы
+			if (answerTexts != null) {
+				for (int i = 0; i < answerTexts.size(); i++) {
+					String answerText = answerTexts.get(i);
+					if (answerText != null && !answerText.trim().isEmpty()) {
+						Answer answer = new Answer();
+						answer.setQuestion(question);
+						answer.setText(answerText);
+						answer.setIsCorrect(correctAnswerIndices != null && correctAnswerIndices.contains(i));
+						testService.saveAnswer(answer);
+					}
 				}
 			}
 			
+			return "redirect:/admin/tests/questions/" + question.getExam().getId() + "?success";
+		}
+		
+		return "redirect:/admin/tests/manage";
+	}
+	
+	@PostMapping("/questions/{testId}/add")
+	@Transactional
+	public String addQuestion(@PathVariable Long testId,
+			@RequestParam("text") String questionText,
+			@RequestParam(value = "answers", required = false) List<String> answerTexts,
+			@RequestParam(value = "correctAnswers", required = false) List<Integer> correctAnswerIndices,
+			@RequestParam(value = "multipleCorrect", defaultValue = "false") Boolean multipleCorrect,
+			Model model)
+	{
+		
+		try {
+			Optional<Exam> examOpt = testService.getExamById(testId);
+			if (examOpt.isEmpty()) {
+				return "redirect:/admin/tests/manage";
+			}
+			
+			Exam exam = examOpt.get();
+			
+			// Создаем вопрос
+			Question question = new Question();
+			question.setExam(exam);
+			question.setText(questionText);
+			question.setQuestionType(multipleCorrect ? "MULTIPLE_CHOICE" : "SINGLE_CHOICE");
+			question.setDisplayOrder(exam.getQuestions().size() + 1);
+			
+			Question savedQuestion = testService.saveQuestion(question);
+			
+			// Добавляем ответы
+			if (answerTexts != null) {
+				for (int i = 0; i < answerTexts.size(); i++) {
+					String answerText = answerTexts.get(i);
+					if (answerText != null && !answerText.trim().isEmpty()) {
+						Answer answer = new Answer();
+						answer.setQuestion(savedQuestion);
+						answer.setText(answerText);
+						answer.setIsCorrect(correctAnswerIndices != null && correctAnswerIndices.contains(i));
+						testService.saveAnswer(answer);
+					}
+				}
+			}
+			
+			return "redirect:/admin/tests/questions/" + testId + "?success";
+			
+		} catch (Exception e) {
+			model.addAttribute("error", "Ошибка при создании вопроса: " + e.getMessage());
 			return "redirect:/admin/tests/questions/" + testId;
 		}
-		return "redirect:/admin/tests/manage";
 	}
 	
 	@GetMapping("/take/{id}")
@@ -166,7 +247,8 @@ public class TestManagementController {
 	@PreAuthorize("hasAnyRole('ADMIN', 'INSTRUCTOR', 'CANDIDATE')")
 	public String submitTest(@PathVariable Long id,
 			@RequestParam("answers") List<Long> answerIds,
-			Authentication authentication) {
+			Authentication authentication)
+	{
 		Optional<Exam> exam = testService.getExamById(id);
 		if (exam.isPresent()) {
 			User user = (User) authentication.getPrincipal();
@@ -207,4 +289,5 @@ public class TestManagementController {
 		testService.deleteQuestion(questionId);
 		return "redirect:/admin/tests/questions/" + testId;
 	}
+	
 }
